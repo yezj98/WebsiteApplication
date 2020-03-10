@@ -11,16 +11,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.AlreadyBoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,11 +37,15 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     ArrayList<ItemActivity> itemList;
     String website, mWebsiteTitle;
+    ActionBarDrawerToggle toggle;
+    DrawerLayout drawerLayout;
 
     EditText insert_edit;
     Button insert_button;
+
     ImageView imageView;
     private int PermissionCode = 123;
+
 
 
     @Override
@@ -43,32 +53,55 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         itemList = new ArrayList<>();
+        FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
 
-        insert_button = findViewById(R.id.button);
-        insert_edit = findViewById(R.id.editText);
-
-
-        Permission();
 
         create();
         build();
 
 
-        insert_button.setOnClickListener(new View.OnClickListener() {
+
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                website = insert_edit.getText().toString();
-                addItem(website);
+                dialog();
+
             }
         });
 
 
     }
 
+    public void dialog () {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this).setTitle("Add website link");
+
+        final EditText editText = new EditText(this);
+        builder.setView(editText);
+
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final String websiteLink = editText.getText().toString();
+                Log.d ("name1", "" +websiteLink);
+                addItem(websiteLink);
+            }
+        }).setNegativeButton("Done", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        }).show();
+    }
+
     public void addItem(String name) {
 
-        itemList.add(new ItemActivity(name + "/favicon.ico", websiteTitle(name), name));
+        String http = "https://";
+
+        itemList.add(new ItemActivity(http + name + "/favicon.ico".replaceAll("", ""), websiteTitle(http + name), http + name));
         Collections.sort(itemList, new Comparator<ItemActivity>() {
             @Override
             public int compare(ItemActivity itemActivity, ItemActivity t1) {
