@@ -1,16 +1,18 @@
 package com.example.myapplication;
 
+import android.graphics.drawable.Drawable;
+
 public class ItemActivity {
-    private int mimageResource;
+    private String mimageResource;
     private String mText1, mText2;
 
-    public ItemActivity(int mimageResource, String mText1, String mText2) {
+    public ItemActivity(String mimageResource, String mText1, String mText2) {
         this.mimageResource = mimageResource;
         this.mText1 = mText1;
         this.mText2 = mText2;
     }
 
-    public int getMimageResource() {
+    public String getMimageResource() {
         return mimageResource;
     }
 

@@ -13,6 +13,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/darker_gray"
         android:scrollbars="vertical"
+        android:layoutAnimation="@anim/layout_animation"
         android:layout_marginBottom="200dp"
         />
 
@@ -30,12 +31,5 @@
         android:layout_above="@+id/editText"
         android:text="Insert "
         />
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        app:srcCompat="@drawable/ic_android"
-        android:layout_centerInParent="true"/>
 
 </RelativeLayout>

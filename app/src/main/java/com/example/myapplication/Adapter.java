@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -43,10 +46,15 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         ItemActivity itemActivity = arrayList.get(position);
-        holder.imageView.setImageResource(itemActivity.getMimageResource());
+//        holder.imageView.setImageResource(itemActivity.getMimageResource());
         holder.textView1.setText(itemActivity.getmText1());
         holder.textView2.setText(itemActivity.getmText2());
+
+        Glide.with(holder.imageView.getContext()).load(itemActivity.getMimageResource())
+                .dontAnimate().into(holder.imageView);
+
     }
 
     //The size of the list 
