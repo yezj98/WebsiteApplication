@@ -1,39 +1,33 @@
 package com.example.myapplication;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
+    Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<ItemActivity> itemList;
     String website, mWebsiteTitle;
@@ -74,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void addItem(String name) {
 
-        itemList.add(new ItemActivity(name+"/favicon.ico", websiteTitle(name), name));
+        itemList.add(new ItemActivity(name + "/favicon.ico", websiteTitle(name), name));
         Collections.sort(itemList, new Comparator<ItemActivity>() {
             @Override
             public int compare(ItemActivity itemActivity, ItemActivity t1) {
@@ -84,8 +78,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         adapter.notifyDataSetChanged();
+    }
 
+    public void removeItem (int position) {
+        itemList.remove(position);
+        Collections.sort(itemList, new Comparator<ItemActivity>() {
+            @Override
+            public int compare(ItemActivity itemActivity, ItemActivity t1) {
 
+                return itemActivity.getmText1().compareTo(t1.getmText1());
+            }
+        });
+
+        adapter.notifyItemRemoved(position);
     }
 
     public static String websiteTitle(String url) {
@@ -104,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         itemList.add(new ItemActivity("https://www.channelnewsasia.com/favicon.ico", websiteTitle("https://www.channelnewsasia.com"), "https://www.channelnewsasia.com"));
         itemList.add(new ItemActivity("https://www.sg.yahoo.com/favicon.ico", websiteTitle("https://sg.yahoo.com"), "https://sg.yahoo.com"));
         itemList.add(new ItemActivity("https://www.google.com/favicon.ico", websiteTitle("https://www.google.com"), "https://www.google.com"));
-        Log.d ("itemlist", "" +itemList);
+        Log.d("itemlist", "" + itemList);
 
         Collections.sort(itemList, new Comparator<ItemActivity>() {
             @Override
@@ -123,6 +128,25 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
+        adapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
+            @Override
+            public void OnItemClick(final int position) {
+                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle("Setting")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                removeItem(position);
+                            }
+                        }).setNegativeButton("Done", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                            }
+                        }).show();
+
+            }
+        });
 
     }
 
@@ -135,10 +159,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static Drawable LoadPicture (String url) {
+    public static Drawable LoadPicture(String url) {
         try {
             InputStream inputStream = (InputStream) new URL(url).getContent();
-            Drawable drawable = Drawable.createFromStream(inputStream, "src name") ;
+            Drawable drawable = Drawable.createFromStream(inputStream, "src name");
             return drawable;
         } catch (Exception e) {
             return null;

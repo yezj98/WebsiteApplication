@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,16 +17,37 @@ import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
     ArrayList <ItemActivity> arrayList;
+    private OnItemClickListener onItemClickListener;
+
+    public interface OnItemClickListener {
+        void OnItemClick(int position);
+    }
+
+    public void setOnItemClickListener (OnItemClickListener listener) {
+        onItemClickListener = listener;
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
          ImageView imageView;
          TextView textView1, textView2;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageview);
             textView1 = itemView.findViewById(R.id.textview);
             textView2 = itemView.findViewById(R.id.textview2);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.OnItemClick(position);
+                        }
+                    }
+                }
+            });
 
         }
     }
@@ -40,7 +62,7 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_list,parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view, onItemClickListener);
         return viewHolder;
     }
 
