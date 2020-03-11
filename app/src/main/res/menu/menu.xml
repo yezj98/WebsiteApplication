@@ -8,11 +8,6 @@
         android:title="Sort"
         app:showAsAction="always"/>
 
-    <item
-        android:id = "@+id/select"
-        android:title="Multiple select"
-        android:icon="@drawable/ic_done_black_24dp"
-        app:showAsAction="always"/>
 
     <item
         android:id = "@+id/delete"

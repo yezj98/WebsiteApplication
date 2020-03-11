@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
 public class ItemActivity {
@@ -11,6 +12,10 @@ public class ItemActivity {
         this.mimageResource = mimageResource;
         this.mText1 = mText1;
         this.mText2 = mText2;
+    }
+
+    public void changetext (String s) {
+        mimageResource = s;
     }
 
     public String getMimageResource() {

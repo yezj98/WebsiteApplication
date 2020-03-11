@@ -1,32 +1,25 @@
 package com.example.myapplication;
 
-import android.content.ClipData;
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.ColorSpace;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.ListMenuItemView;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
-    ArrayList <ItemActivity> arrayList, selected;
+public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
+    ArrayList<ItemActivity> arrayList, selected;
+    ArrayList<CardView> cardViewList = new ArrayList<>();
     private OnItemClickListener onItemClickListener;
-    private SparseBooleanArray sparseBooleanArray = new SparseBooleanArray();
-    Context context;
+    int row = -1;
 
 
     public interface OnItemClickListener {
@@ -34,21 +27,23 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
     }
 
 
-    public void setOnItemClickListener (OnItemClickListener listener) {
+    public void setOnItemClickListener(OnItemClickListener listener) {
         onItemClickListener = listener;
     }
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-         ImageView imageView;
-         TextView textView1, textView2;
+        ImageView imageView;
+        TextView textView1, textView2;
+
+        CardView cardView;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageview);
             textView1 = itemView.findViewById(R.id.textview);
             textView2 = itemView.findViewById(R.id.textview2);
-
+            cardView = itemView.findViewById(R.id.cardview);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -63,8 +58,9 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
 
         }
     }
+
     //Paste the item
-    public Adapter(ArrayList<ItemActivity> itemList ) {
+    public Adapter(ArrayList<ItemActivity> itemList) {
         arrayList = itemList;
         notifyDataSetChanged();
     }
@@ -73,15 +69,18 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_list,parent, false);
+        LinearLayout linearLayout;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_list, parent, false);
         ViewHolder viewHolder = new ViewHolder(view, onItemClickListener);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        selected = new ArrayList<>();
 
         final ItemActivity itemActivity = arrayList.get(position);
+
 
 //        holder.imageView.setImageResource(itemActivity.getMimageResource());
         holder.textView1.setText(itemActivity.getmText1());
@@ -89,7 +88,6 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
 
         Glide.with(holder.imageView.getContext()).load(itemActivity.getMimageResource())
                 .dontAnimate().into(holder.imageView);
-
 
 
     }

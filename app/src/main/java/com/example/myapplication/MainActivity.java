@@ -4,15 +4,19 @@ import android.Manifest;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -26,6 +30,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.InputStream;
@@ -52,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         itemList = new ArrayList<>();
         selected = new ArrayList<>();
+
+
         FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
 
         create();
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void dialog () {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this).setTitle("Add website link");
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this).setTitle("Add website link (start with www.eg.com)");
 
         final EditText editText = new EditText(this);
         builder.setView(editText);
@@ -78,9 +85,14 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                final String websiteLink = editText.getText().toString();
-                Log.d ("name1", "" +websiteLink);
-                addItem(websiteLink);
+                try {
+                    final String websiteLink = editText.getText().toString();
+                    Log.d ("name1", "" +websiteLink);
+                    addItem(websiteLink);
+                }catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "Do not enter https://", Toast.LENGTH_SHORT).show();
+                }
+
             }
         }).setNegativeButton("Done", new DialogInterface.OnClickListener() {
             @Override
@@ -157,19 +169,15 @@ public class MainActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
             @Override
             public void OnItemClick(final int position) {
-                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle("Setting")
-                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                removeItem(position);
-                            }
-                        }).setNegativeButton("Done", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                itemList.get(position).changetext("https://i.dlpng.com/static/png/6705921_preview.png");
+                selected.add(position);
+                Comparator comparator = Collections.reverseOrder(); // debug, the system cannot delete if the cardview position start with zero
+                Collections.sort(selected, comparator);
+
+                adapter.notifyDataSetChanged();
 
 
-                            }
-                        }).show();
             }
         });
         ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
@@ -198,6 +206,22 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void Dialogdelete (final int position) {
+        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle("Setting")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        removeItem(position);
+                    }
+                }).setNegativeButton("Done", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                    }
+                }).show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         switch (item.getItemId()) {
@@ -210,8 +234,47 @@ public class MainActivity extends AppCompatActivity {
                 });
                 adapter.notifyItemRangeChanged(0, itemList.size());
 
+            case R.id.delete:
+                delete();
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void multiple (int position) {
+
+        Log.d ("selected1", "" + selected);
+    }
+
+    private void delete () {
+
+        try {
+            for (int i : selected) {
+                itemList.remove(i);
+                Log.d("this", "" + itemList);
+                Log.d("this", "" + i);
+
+                adapter.notifyItemRemoved(i);
+            }
+
+
+
+        }catch (Exception e) {
+
+        }
+        selected.clear();
+
+        Log.d ("listse" , "" + selected);
+        Collections.sort(itemList, new Comparator<ItemActivity>() {
+            @Override
+            public int compare(ItemActivity itemActivity, ItemActivity t1) {
+
+                return itemActivity.getmText1().compareTo(t1.getmText1());
+            }
+        });
+
+
+
     }
 
 
