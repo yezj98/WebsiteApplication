@@ -1,16 +1,20 @@
 package com.example.myapplication;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,16 +41,8 @@ public class MainActivity extends AppCompatActivity {
     Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<ItemActivity> itemList;
-    String website, mWebsiteTitle;
-    ActionBarDrawerToggle toggle;
-    DrawerLayout drawerLayout;
-
-    EditText insert_edit;
-    Button insert_button;
-
-    ImageView imageView;
-    private int PermissionCode = 123;
-
+    ArrayList<Integer> selected;
+    int x;
 
 
     @Override
@@ -53,16 +50,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         itemList = new ArrayList<>();
+        selected = new ArrayList<>();
         FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
-
 
         create();
         build();
-
-
-
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,29 +170,49 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         }).show();
+            }
+        });
+        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder drag, @NonNull RecyclerView.ViewHolder target) {
+
+                int dragPosition = drag.getAdapterPosition();
+                int targetPosition = target.getAdapterPosition();
+
+                Collections.swap(itemList, dragPosition, targetPosition);
+                adapter.notifyItemMoved(dragPosition,targetPosition);
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
             }
         });
-
+        touchHelper.attachToRecyclerView(recyclerView);
     }
 
-    private void Permission() {
-        String[] permission = {Manifest.permission.INTERNET};
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, permission, PermissionCode);
-        } else {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sort:
+                Collections.sort(itemList, new Comparator<ItemActivity>() {
+                    @Override
+                    public int compare(ItemActivity itemActivity, ItemActivity t1) {
+                        return itemActivity.getmText1().compareTo(t1.getmText1());
+                    }
+                });
+                adapter.notifyItemRangeChanged(0, itemList.size());
 
         }
+        return super.onOptionsItemSelected(item);
     }
 
-    public static Drawable LoadPicture(String url) {
-        try {
-            InputStream inputStream = (InputStream) new URL(url).getContent();
-            Drawable drawable = Drawable.createFromStream(inputStream, "src name");
-            return drawable;
-        } catch (Exception e) {
-            return null;
-        }
 
-    }
 }

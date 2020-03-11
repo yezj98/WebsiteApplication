@@ -1,6 +1,10 @@
 package com.example.myapplication;
 
+import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.ColorSpace;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.ListMenuItemView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -16,16 +23,21 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
-    ArrayList <ItemActivity> arrayList;
+    ArrayList <ItemActivity> arrayList, selected;
     private OnItemClickListener onItemClickListener;
+    private SparseBooleanArray sparseBooleanArray = new SparseBooleanArray();
+    Context context;
+
 
     public interface OnItemClickListener {
         void OnItemClick(int position);
     }
 
+
     public void setOnItemClickListener (OnItemClickListener listener) {
         onItemClickListener = listener;
     }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
          ImageView imageView;
@@ -54,9 +66,9 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
     //Paste the item
     public Adapter(ArrayList<ItemActivity> itemList ) {
         arrayList = itemList;
-
-
+        notifyDataSetChanged();
     }
+
 
     @NonNull
     @Override
@@ -67,9 +79,10 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
-        ItemActivity itemActivity = arrayList.get(position);
+        final ItemActivity itemActivity = arrayList.get(position);
+
 //        holder.imageView.setImageResource(itemActivity.getMimageResource());
         holder.textView1.setText(itemActivity.getmText1());
         holder.textView2.setText(itemActivity.getmText2());
@@ -77,11 +90,15 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
         Glide.with(holder.imageView.getContext()).load(itemActivity.getMimageResource())
                 .dontAnimate().into(holder.imageView);
 
+
+
     }
 
-    //The size of the list 
+    //The size of the list
     @Override
     public int getItemCount() {
         return arrayList.size();
     }
+
+
 }

@@ -6,6 +6,7 @@ public class ItemActivity {
     private String mimageResource;
     private String mText1, mText2;
 
+
     public ItemActivity(String mimageResource, String mText1, String mText2) {
         this.mimageResource = mimageResource;
         this.mText1 = mText1;
